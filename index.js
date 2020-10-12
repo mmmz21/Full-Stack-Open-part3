@@ -1,3 +1,4 @@
+const { notEqual } = require('assert')
 const { response } = require('express')
 const express = require('express')
 const app = express()
@@ -18,6 +19,7 @@ app.get('/', (req, res) => {
   response.send('<h1> Phonebook!</h1>')
 })
 
+// display all phonebook entries
 app.get('/api/persons', (req, res) => {
   res.json(persons)
 })
@@ -37,6 +39,14 @@ app.get('/api/persons/:id', (req, res) => {
   } else {
     res.status(404).end()
   }
+})
+
+// delete phonebook entries
+app.delete('/api/persons/:id', (req, res) => {
+  const id = Number(req.params.id)
+  // filter out the entry that is being deleted
+  persons = persons.filter(person => person.id !== id)
+  res.status(204).end()
 })
 const PORT = 3001
 app.listen(PORT)
