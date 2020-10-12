@@ -13,6 +13,7 @@ const requestLogger = (request, response, next) => {
 //activate's the express json-parser
 app.use(express.json())
 app.use(requestLogger)
+morgan.token('type', function (req, res) { return req.headers['POST'] })
 app.use(morgan('tiny'))
 let persons = [
   {
