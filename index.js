@@ -1,4 +1,6 @@
+const { response } = require('express')
 const express = require('express')
+const nodemon = require('nodemon')
 const app = express()
 //activate's the express json-parser
 app.use(express.json())
@@ -51,9 +53,16 @@ app.delete('/api/persons/:id', (req, res) => {
 // add new phonebook entries to the server 
 app.post('/api/persons', (req, res) => {
   const body = req.body
+  const same = persons.find(person => person.name === body.name)
+
   if (!body.name) {
     return response.status(400).json({
       error: 'name missing'
+    })
+  }
+  else if (same) {
+    return response.status(400).json({
+      error: 'name must be unique'
     })
   }
   else if (!body.num) {
@@ -68,7 +77,7 @@ app.post('/api/persons', (req, res) => {
   }
 
   persons = persons.concat(person)
-  res.json(person)
+  res.json(persons)
 })
 const PORT = 3001
 app.listen(PORT)
