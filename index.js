@@ -3,6 +3,9 @@ const express = require('express')
 const nodemon = require('nodemon')
 const app = express()
 const morgan = require('morgan')
+const cors = require('cors')
+const { runInNewContext } = require('vm')
+const { receiveMessageOnPort } = require('worker_threads')
 const requestLogger = (request, response, next) => {
   console.log('Method: ', request.method)
   console.log('Path: ', request.path)
@@ -13,8 +16,12 @@ const requestLogger = (request, response, next) => {
 //activate's the express json-parser
 app.use(express.json())
 app.use(requestLogger)
-morgan.token('type', function (req, res) { return req.headers['POST'] })
-app.use(morgan('tiny'))
+morgan.token('post-body', function (req, res) {
+  if (req.method === 'POST') {
+    return JSON.stringify(req.body)
+  }
+})
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post-body'))
 let persons = [
   {
     "name": "Harry Hole",
