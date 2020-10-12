@@ -2,8 +2,18 @@ const { response } = require('express')
 const express = require('express')
 const nodemon = require('nodemon')
 const app = express()
+const morgan = require('morgan')
+const requestLogger = (request, response, next) => {
+  console.log('Method: ', request.method)
+  console.log('Path: ', request.path)
+  console.log('Body: ', request.body)
+  console.log('---')
+  next()
+}
 //activate's the express json-parser
 app.use(express.json())
+app.use(requestLogger)
+app.use(morgan('tiny'))
 let persons = [
   {
     "name": "Harry Hole",
@@ -79,6 +89,10 @@ app.post('/api/persons', (req, res) => {
   persons = persons.concat(person)
   res.json(persons)
 })
+const unknownEndpoint = (req, res) => {
+  res.status(404).send({ error: 'unknown endpoint' })
+}
+app.use(unknownEndpoint)
 const PORT = 3001
 app.listen(PORT)
 console.log(`Server running on port ${PORT}`)
