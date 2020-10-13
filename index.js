@@ -1,13 +1,10 @@
-const { response } = require('express')
 const express = require('express')
-const nodemon = require('nodemon')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
 require("dotenv").config()
-const favicon = require("serve-favicon")
-const { runInNewContext } = require('vm')
-const { receiveMessageOnPort } = require('worker_threads')
+
+
 const requestLogger = (request, response, next) => {
   console.log('Method: ', request.method)
   console.log('Path: ', request.path)
@@ -16,7 +13,7 @@ const requestLogger = (request, response, next) => {
   next()
 }
 //activate's the express json-parser
-app.use(express.json())
+app.use(express.static('build'))
 app.use(requestLogger)
 app.use(cors())
 app.use(favicon(path.join(dirname, "build", "favicon.ico")))
