@@ -12,8 +12,10 @@ const requestLogger = (request, response, next) => {
   console.log('---')
   next()
 }
-//activate's the express json-parser
 app.use(express.static('build'))
+//activate's the express json-parser
+app.use(express.json())
+
 app.use(requestLogger)
 app.use(cors())
 app.use(favicon(path.join(dirname, "build", "favicon.ico")))
