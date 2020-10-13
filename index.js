@@ -4,6 +4,8 @@ const nodemon = require('nodemon')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
+require("dotenv").config()
+const favicon = require("serve-favicon")
 const { runInNewContext } = require('vm')
 const { receiveMessageOnPort } = require('worker_threads')
 const requestLogger = (request, response, next) => {
@@ -17,6 +19,7 @@ const requestLogger = (request, response, next) => {
 app.use(express.json())
 app.use(requestLogger)
 app.use(cors())
+app.use(favicon(path.join(dirname, "build", "favicon.ico")))
 
 morgan.token('post-body', function (req, res) {
   if (req.method === 'POST') {
