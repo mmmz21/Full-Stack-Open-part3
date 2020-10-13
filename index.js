@@ -16,6 +16,8 @@ const requestLogger = (request, response, next) => {
 //activate's the express json-parser
 app.use(express.json())
 app.use(requestLogger)
+app.use(cors())
+
 morgan.token('post-body', function (req, res) {
   if (req.method === 'POST') {
     return JSON.stringify(req.body)
