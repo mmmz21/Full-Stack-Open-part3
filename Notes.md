@@ -208,3 +208,22 @@ notes/10      PUT	         replaces the entire identified resource with the requ
 
 notes/10      PATCH	       replaces a part of the identified resource with the request data
 </pre>
+
+This is how we manage to roughly define what REST refers to as a uniform interface, which means a consistent way of defining interfaces that makes it possible for systems to co-operate.
+
+### Fetching a single resource
+Let's create a route for fetching a single resource:
+```JSX
+app.get('/api/notes/:id', (request, response) => {
+  // the id is a string by default 
+  const id = Number(request.params.id)
+  const note = notes.find(note => note.id === id)
+  
+  if (note) {
+    response.json(note)
+  } else {
+    response.status(404).end()
+  }
+})
+```
+### Deleting resources
