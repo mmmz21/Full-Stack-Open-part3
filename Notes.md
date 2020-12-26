@@ -128,3 +128,56 @@ $ npm install
 ```
 
 ### Web and express
+Change index.js to look like:
+``` jsx
+const express = require('express')
+// an express application stored in the app variable
+const app = express()
+
+let notes = [
+  ...
+]
+
+// define two routes to the application - one to root, and one to notes 
+app.get('/', (request, response) => {
+  response.send('<h1>Hello World!</h1>')
+})
+
+// the event handler accepts two parameters - the request with all the info for an HTTP request, and a response to define how the request is reponded to
+app.get('/api/notes', (request, response) => {
+  // formats and sends the notes array as a JSON formatted string
+  response.json(notes)
+})
+
+const PORT = 3001
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
+```
+### nodemon
+If we make changes to the application's code we have to restart the application in order to see the changes. We restart the application by first shutting it down by typing Ctrl+C and then restarting the application.
+
+The solution to this problem is **nodemon** which will watch the files in the directory in which nodemon was started. If any files change, nodemon will automatically restart your node application.
+
+Install nodemon as a development dependency:
+```console
+$ npm install --save-dev nodemon
+```
+and change the package.json file:
+```javascript
+{
+  // ..
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js", // by adding this line!
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  // ..
+}
+```
+We can now start the server in dev mode:
+```console
+$ npm run dev
+```
+
+### REST 
