@@ -311,3 +311,7 @@ const unknownEndpoint = (request, response) => {
 
 app.use(unknownEndpoint)
 ```
+
+# b) Deploying app to internet
+### Same origin policy and CORS
+**Cross-origin resource sharing (CORS)*** is a mechanism that allows restricted resources (e.g. fonts) on a web page to be requested from another domain outside the domain from which the first resource was served. A web page may freely embed cross-origin images, stylesheets, scripts, iframes, and videos. Certain "cross-domain" requests, notably Ajax requests, are forbidden by default by the same-origin security policy.
