@@ -227,3 +227,54 @@ app.get('/api/notes/:id', (request, response) => {
 })
 ```
 ### Deleting resources
+```javascript
+app.delete('/api/notes/:id', (request, response) => {
+  const id = Number(request.params.id)
+  notes = notes.filter(note => note.id !== id)
+
+  response.status(204).end()
+})
+```
+### Postman and the Visual Studio Rest Client 
+either can be used to test HTTP requests/responses
+
+### Receiving data
+Now, allow new notes to be added to the server. Adding a note happens by making an HTTP POST request to the address http://localhost:3001/api/notes, and by sending all the information for the new note in the request body in the JSON format.
+
+In order to access the data easily, we need the help of the express json-parser, that is taken to use with command app.use(express.json()).
+```javascript
+const express = require('express')
+const app = express()
+
+app.use(express.json())
+//... 
+
+const generateId = () => {
+  const maxId = notes.length > 0
+    ? Math.max(...notes.map(n => n.id))
+    : 0
+  return maxId + 1
+}
+
+app.post('/api/notes', (request, response) => {
+  const body = request.body
+
+  if (!body.content) {
+    return response.status(400).json({ 
+      error: 'content missing' 
+    })
+  }
+
+  const note = {
+    content: body.content,
+    important: body.important || false,
+    date: new Date(),
+    id: generateId(),
+  }
+
+  notes = notes.concat(note)
+
+  response.json(note)
+})
+```
+Degbugging: One of the main issues is a missing Content-type header, which will cause the code to not work. Check the content-type header using `console.log(request.headers)`
