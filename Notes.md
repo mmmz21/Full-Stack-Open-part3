@@ -278,3 +278,36 @@ app.post('/api/notes', (request, response) => {
 })
 ```
 Degbugging: One of the main issues is a missing Content-type header, which will cause the code to not work. Check the content-type header using `console.log(request.headers)`
+
+### About HTTP request types
+The HTTP standard talks about two properties related to request types, safety and idempotence.
+- **Safety** means that the executing request must not cause any side effects in the server/change the state of the database (GET and HEAD)
+- **Idempotence** means that if a request has side-effects, then the result should be the same regardless of how many times the request is sent (true for GET, HEAD, PUT, DELETE but not POST)
+
+### Middleware
+**Middleware** are functions that can be used for handling request and response objects (like the express json-parser)
+
+Middleware is a function that receives three parameters:
+```JSX
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next() // yields control to the next middleware (if multiple are used)
+}
+```
+Middleware is used like:
+```JSX
+app.use(requestLogger)
+```
+Middleware functions are called in the order that they're taken into use with the express server object's use method. 
+
+Let's add the following middleware after our routes, that is used for catching requests made to non-existent routes. For these requests, the middleware will return an error message in the JSON format.
+```javascript
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
+```
