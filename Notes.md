@@ -315,3 +315,34 @@ app.use(unknownEndpoint)
 # b) Deploying app to internet
 ### Same origin policy and CORS
 **Cross-origin resource sharing (CORS)*** is a mechanism that allows restricted resources (e.g. fonts) on a web page to be requested from another domain outside the domain from which the first resource was served. A web page may freely embed cross-origin images, stylesheets, scripts, iframes, and videos. Certain "cross-domain" requests, notably Ajax requests, are forbidden by default by the same-origin security policy.
+
+! By default, JS code that runs in a browser can only communicate with a server in the **same origin**. Because our server is in localhost port 3001, and our frontend in localhost port 3000, they do not have the same origin.
+
+We can allow requests from other origins by using Node's cors middleware. 
+```console
+$ npm install cors
+```
+take the middleware to use and allow for requests from all origins:
+```javascript
+const cors = require('cors')
+app.use(cors())
+```
+### Application to the Internet
+
+Now that the whole stack is ready, let's move our application to the internet. We'll use Heroku for this.
+
+Add a file called Procfile to tell Heroku how to start the app:
+```jsx
+web: npm start
+```
+Change the definition of the port our application uses at the bottom of the index.js file like so:
+```JSX
+const PORT = process.env.PORT || 3001
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
+```
+Now we are using the port defined in environment variable PORT or port 3001 if the environment variable PORT is undefined. Heroku configures application port based on the environment variable.
+
+Create a Git repository in the project directory, and add .gitignore with `node_modules` in it
+
