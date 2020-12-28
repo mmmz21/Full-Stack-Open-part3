@@ -346,3 +346,6 @@ Now we are using the port defined in environment variable PORT or port 3001 if t
 
 Create a Git repository in the project directory, and add .gitignore with `node_modules` in it
 
+Now create a Heroku application using `heroku create`, commit your code to the repository, and move it to Heroku with command `git push heroku main` (or `git push heroku HEAD:master`)
+
+**To debug**, read the logs using `heroku logs`
