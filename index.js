@@ -1,24 +1,23 @@
+require("dotenv").config()
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
-require("dotenv").config()
 
 
-const requestLogger = (request, response, next) => {
-  console.log('Method: ', request.method)
-  console.log('Path: ', request.path)
-  console.log('Body: ', request.body)
+const requestLogger = (req, res, next) => {
+  console.log('Method: ', req.method)
+  console.log('Path: ', req.path)
+  console.log('Body: ', req.body)
   console.log('---')
   next()
 }
+const app = express()
 app.use(express.static('build'))
 //activate's the express json-parser
 app.use(express.json())
-
 app.use(requestLogger)
 app.use(cors())
-app.use(favicon(path.join(dirname, "build", "favicon.ico")))
 
 morgan.token('post-body', function (req, res) {
   if (req.method === 'POST') {
@@ -42,15 +41,15 @@ app.get('/', (req, res) => {
   response.send('<h1> Phonebook!</h1>')
 })
 
-// display all phonebook entries
-app.get('/api/persons', (req, res) => {
-  res.json(persons)
-})
-
 app.get('/info', (req, res) => {
   const num_ppl = persons.length
   let date = new Date()
   res.json(`Phonebook has info for ${num_ppl} people ${date}`)
+})
+
+// display all phonebook entries
+app.get('/api/persons', (req, res) => {
+  res.json(persons)
 })
 
 // fetch an individual entry using it's id
