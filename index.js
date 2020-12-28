@@ -12,6 +12,7 @@ const requestLogger = (req, res, next) => {
   console.log('---')
   next()
 }
+//middlewares
 app.use(express.static('build'))
 //activate's the express json-parser
 app.use(express.json())
