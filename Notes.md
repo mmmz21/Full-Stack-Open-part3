@@ -349,3 +349,24 @@ Create a Git repository in the project directory, and add .gitignore with `node_
 Now create a Heroku application using `heroku create`, commit your code to the repository, and move it to Heroku with command `git push heroku main` (or `git push heroku HEAD:master`)
 
 **To debug**, read the logs using `heroku logs`
+
+The application now runs at:
+protected-peak.herokuapp.com/api/notes
+
+### Frontend production build
+So far we have been running React code in development mode. In development mode the application is configured to give clear error messages, immediately render code changes to the browser, and so on.
+
+When the application is deployed, we must create a **production build**. 
+
+A production build of applications created with create-react-app can be created with command `npm run build` at the root of the frontend project (part 2 - phonebook). 
+
+This creates a directory called *build* (which contains the only HTML file of our application, index.html ) which contains the directory *static*. **Minified** version of our application's JavaScript code will be generated to the static directory. Even though the application code is in multiple files, all of the JavaScript will be minified into one file. Actually all of the code from all of the application's dependencies will also be minified into this single file.
+
+### Serving static files from the backend 
+One option for deploying the frontend is to copy the production build (the build directory) to the root of the backend repository and configure the backend to show the frontend's main page (the file build/index.html) as its main page.
+
+To make express show static content, the page index.html and the JavaScript, etc., it fetches, we need a built-in middleware from express called **static**.
+ ```javascript
+ app.use(express.static('build'))
+ ```
+Now www.serveraddress.com/index.html and www.serveraddress.com show the React front end. GET requests to the address www.serversaddress.com/api/notes will be handled by the backend's code.
