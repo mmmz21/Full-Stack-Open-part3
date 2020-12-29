@@ -369,4 +369,57 @@ To make express show static content, the page index.html and the JavaScript, etc
  ```javascript
  app.use(express.static('build'))
  ```
-Now www.serveraddress.com/index.html and www.serveraddress.com show the React front end. GET requests to the address www.serversaddress.com/api/notes will be handled by the backend's code.
+Now www.serveraddress.com/index.html and www.serveraddress.com show the React frontend. GET requests to the address www.serversaddress.com/api/notes will be handled by the backend's code.
+
+Now both the frontend and the backend are at the same address, so in the front end (Part2 for the phonebook, person.js), we can decare baseUrl as a relative URL and leave out the part declaring the server. 
+Original:
+```JSX
+import axios from 'axios'
+const baseUrl = 'http://localhost:3001/persons'
+```
+New:
+import axios from 'axios'
+const baseUrl = '/api/notes'
+```
+Now create a new production build and copy it to the backend repo. 
+
+### Streamlining deploying of the frontend 
+Add some npm-scripts to the backend package.json:
+```javascript
+  "scripts": {
+    //...
+    "build:ui": "rm -rf build && cd ../../osa2/materiaali/notes-new && npm run build --prod && cp -r build ../../../osa3/notes-backend/", 
+    "deploy": "git push heroku main",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",    
+    "logs:prod": "heroku logs --tail"
+  }
+}
+```
+The script `npm run build:ui` builds the frontend and copies the production version under the backend repository. `npm run` deploy releases the current backend to heroku.
+
+`npm run deploy:full` combines these two and contains the necessary git commands to update the backend repository.
+
+There is also a script `npm run logs:prod` to show the heroku logs.
+
+### Proxy
+Changes on the frontend have caused it to no longer work in development mode (when started with command npm start), as the connection to the backend does not work (since the baseUrl was changed from "http://localhost:3001" to 'api/notes')
+
+Because in development mode the frontend is at the address localhost:3000, the requests to the backend go to the wrong address localhost:3000/api/notes. The backend is at localhost:3001.
+
+So add this to the frontend package.json file:
+```javascript
+  "dependencies": {
+    // ...
+  },
+  "scripts": {
+    // ...
+  },
+  "proxy": "http://localhost:3001"
+}
+```
+After a restart, the React development environment will work as a proxy. If the React code does an HTTP request to a server address at http://localhost:3000 not managed by the React application itself (i.e. when requests are not about fetching the CSS or JavaScript of the application), the request will be redirected to the server at http://localhost:3001.
+
+Now the frontend is also fine, working with the server both in development- and production mode.
+
+A negative aspect of our approach is how complicated it is to deploy the frontend. Deploying a new version requires generating new production build of the frontend and copying it to the backend repository. This makes creating an automated deployment pipeline more difficult. **Deployment pipeline** means an automated and controlled way to move the code from the computer of the developer through different tests and quality checks to the production environment.
+
