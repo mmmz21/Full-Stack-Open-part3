@@ -77,17 +77,17 @@ app.post('/api/persons', (req, res) => {
   const same = persons.find(person => person.name === body.name)
 
   if (!body.name) {
-    return response.status(400).json({
+    return res.status(400).json({
       error: 'name missing'
     })
   }
   else if (same) {
-    return response.status(400).json({
+    return res.status(400).json({
       error: 'name must be unique'
     })
   }
   else if (!body.num) {
-    return response.status(400).json({
+    return res.status(400).json({
       error: 'number missing'
     })
   }
@@ -104,7 +104,7 @@ const unknownEndpoint = (req, res) => {
   res.status(404).send({ error: 'unknown endpoint' })
 }
 app.use(unknownEndpoint)
-const PORT = process.env.PORT || 3001
+const PORT = 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
