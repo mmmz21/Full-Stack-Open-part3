@@ -12,6 +12,7 @@ const requestLogger = (req, res, next) => {
   console.log('---')
   next()
 }
+
 //middlewares
 app.use(express.static('build'))
 //activate's the express json-parser
@@ -25,6 +26,7 @@ morgan.token('post-body', function (req, res) {
   }
 })
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post-body'))
+
 let persons = [
   {
     "name": "Harry Hole",
@@ -37,8 +39,9 @@ let persons = [
     "id": 15
   }
 ]
+
 app.get('/', (req, res) => {
-  response.send('<h1> Phonebook!</h1>')
+  res.send('<h1> Phonebook!</h1>')
 })
 
 app.get('/info', (req, res) => {
@@ -75,7 +78,6 @@ app.delete('/api/persons/:id', (req, res) => {
 app.post('/api/persons', (req, res) => {
   const body = req.body
   const same = persons.find(person => person.name === body.name)
-
   if (!body.name) {
     return res.status(400).json({
       error: 'name missing'
@@ -86,14 +88,14 @@ app.post('/api/persons', (req, res) => {
       error: 'name must be unique'
     })
   }
-  else if (!body.num) {
+  else if (!body.number) {
     return res.status(400).json({
       error: 'number missing'
     })
   }
   const person = {
     name: body.name,
-    number: body.num,
+    number: body.number,
     id: Math.floor(Math.random() * Math.floor(100)),
   }
 
