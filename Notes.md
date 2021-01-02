@@ -335,6 +335,8 @@ Add a file called Procfile to tell Heroku how to start the app:
 ```jsx
 web: npm start
 ```
+IMPORTANT- I actually did `web: node index.js` inside of Procfile. If you want Heroku to work with npm you need to initialize the Heroku project differently.
+
 Change the definition of the port our application uses at the bottom of the index.js file like so:
 ```JSX
 const PORT = process.env.PORT || 3001
