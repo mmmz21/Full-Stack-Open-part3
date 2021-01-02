@@ -78,7 +78,7 @@ app.delete('/api/persons/:id', (req, res) => {
 app.post('/api/persons', (req, res) => {
   const body = req.body
   const same = persons.find(person => person.name === body.name)
-  if (!body.name) {
+  /*if (!body.name) {
     return res.status(400).json({
       error: 'Phonebook entries must have a name'
     })
@@ -92,7 +92,7 @@ app.post('/api/persons', (req, res) => {
     return res.status(400).json({
       error: `Phone number is invalid, please re-enter.`
     })
-  }
+  }*/
   const person = {
     name: body.name,
     number: body.number,
