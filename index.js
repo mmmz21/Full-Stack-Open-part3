@@ -3,7 +3,7 @@ const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
-import validator from 'validator'
+const validator = require('validator')
 
 
 const requestLogger = (req, res, next) => {
