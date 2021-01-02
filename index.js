@@ -3,6 +3,7 @@ const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
+import validator from 'validator'
 
 
 const requestLogger = (req, res, next) => {
@@ -78,21 +79,21 @@ app.delete('/api/persons/:id', (req, res) => {
 app.post('/api/persons', (req, res) => {
   const body = req.body
   const same = persons.find(person => person.name === body.name)
-  /*if (!body.name) {
+  if (!body.name) {
     return res.status(400).json({
-      error: 'name missing'
+      error: 'Phonebook entries must have a name'
     })
   }
   else if (same) {
     return res.status(400).json({
-      error: 'name must be unique'
+      error: 'Name must be unique'
     })
   }
-  else if (!body.number) {
+  else if (!validator.isMobilePhone(body.number)) {
     return res.status(400).json({
-      error: 'number missing'
+      error: `Phone number is invalid, please re-enter.`
     })
-  }*/
+  }
   const person = {
     name: body.name,
     number: body.number,
