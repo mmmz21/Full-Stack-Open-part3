@@ -425,3 +425,8 @@ Now the frontend is also fine, working with the server both in development- and 
 
 A negative aspect of our approach is how complicated it is to deploy the frontend. Deploying a new version requires generating new production build of the frontend and copying it to the backend repository. This makes creating an automated deployment pipeline more difficult. **Deployment pipeline** means an automated and controlled way to move the code from the computer of the developer through different tests and quality checks to the production environment.
 
+# c) Saving data to MongoDB
+### Debugging node applications
+**Visual Studio code** - start debugging mode from the top menu, you may have to configure the launch.json file by choosing "Add configuration..." under the Debug drop-down mun, and selecting "Run "npm start" in a debug terminal.
+
+**Chrome dev tools** - start application with the command `node --inspect index.js` then click the green icon in the Chrome developer console. Go to the Sources tab to set breakpoints
