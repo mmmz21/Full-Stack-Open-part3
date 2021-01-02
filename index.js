@@ -78,7 +78,7 @@ app.delete('/api/persons/:id', (req, res) => {
 app.post('/api/persons', (req, res) => {
   const body = req.body
   const same = persons.find(person => person.name === body.name)
-  if (!body.name) {
+  /*if (!body.name) {
     return res.status(400).json({
       error: 'name missing'
     })
@@ -92,7 +92,7 @@ app.post('/api/persons', (req, res) => {
     return res.status(400).json({
       error: 'number missing'
     })
-  }
+  }*/
   const person = {
     name: body.name,
     number: body.number,
@@ -102,6 +102,16 @@ app.post('/api/persons', (req, res) => {
   persons = persons.concat(person)
   res.json(persons)
 })
+
+/*app.put('/api/persons/:id', (req, res) => {
+  const request = axios.put(`${baseUrl}/${id}`, newObject)
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: Math.floor(Math.random() * Math.floor(100)),
+  }
+  return request.then(response => response.data)
+})*/
 const unknownEndpoint = (req, res) => {
   res.status(404).send({ error: 'unknown endpoint' })
 }
