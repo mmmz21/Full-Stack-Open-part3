@@ -3,7 +3,6 @@ const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
-const validator = require('validator')
 
 
 const requestLogger = (req, res, next) => {
@@ -89,7 +88,7 @@ app.post('/api/persons', (req, res) => {
       error: 'Name must be unique'
     })
   }
-  else if (!validator.isMobilePhone(body.number)) {
+  else if (!body.number || body.number.length !== 10) {
     return res.status(400).json({
       error: `Phone number is invalid, please re-enter.`
     })
