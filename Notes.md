@@ -425,3 +425,98 @@ Now the frontend is also fine, working with the server both in development- and 
 
 A negative aspect of our approach is how complicated it is to deploy the frontend. Deploying a new version requires generating new production build of the frontend and copying it to the backend repository. This makes creating an automated deployment pipeline more difficult. **Deployment pipeline** means an automated and controlled way to move the code from the computer of the developer through different tests and quality checks to the production environment.
 
+# c) Saving data to MongoDB
+### Debugging node applications
+**Visual Studio code** - start debugging mode from the top menu, you may have to configure the launch.json file by choosing "Add configuration..." under the Debug drop-down mun, and selecting "Run "npm start" in a debug terminal.
+
+**Chrome dev tools** - start application with the command `node --inspect index.js` then click the green icon in the Chrome developer console. Go to the Sources tab to set breakpoints
+### MongoDB 
+To store our saved notes indefinitely, we need a database. **MongoDB** is a document/NoSQL/non-relational database. MongoDB stores data records as bSON (binary representation of JSON) **documents**, which are gathered together in **collections**. A **database** stores 1+ collections.
+
+Documents are composed of field-value pairs:
+```
+var mydoc = {
+               _id: ObjectId("5099803df3f4948bd2f98391"),  <--- primary key
+               name: { first: "Alan", last: "Turing" },
+               birth: new Date('Jun 23, 1912'),
+               death: new Date('Jun 07, 1954'),
+               contribs: [ "Turing machine", "Turing test", "Turingery" ],
+               views : NumberLong(1250000)
+            }
+```
+Go to MongoDB Atlas and create a cluster using AWS as the provider. Then create a user and grant them read/write permission. Allow access from any IP. Click connect, 'connect your application' and then copy the connection string. 
+
+Then install mongoose `npm install mongoose`, 
+Test using a practice application, mongo.js: 
+```javascript
+const mongoose = require('mongoose')
+
+if (process.argv.length < 3) {
+  console.log('Please provide the password as an argument: node mongo.js <password>')
+  process.exit(1)
+}
+
+const password = process.argv[2]
+
+const url =
+  `mongodb+srv://fullstack:${password}@cluster0-ostce.mongodb.net/test?retryWrites=true`
+
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
+
+const noteSchema = new mongoose.Schema({
+  content: String,
+  date: Date,
+  important: Boolean,
+})
+
+const Note = mongoose.model('Note', noteSchema)
+
+const note = new Note({
+  content: 'HTML is Easy',
+  date: new Date(),
+  important: true,
+})
+
+note.save().then(result => {
+  console.log('note saved!')
+  mongoose.connection.close()
+})
+```
+Run the code using `node mongo.js password` and Mongo will create a database called test and add a new document called note in the notes collection to it. This can be viewed in the cluster under the collections tab. 
+
+### Schema 
+After establishing a connection to the database, we define the **schema** (defines the shapes of documents within a collection) for a note and the matching **model** (a constructor function that creates new JS objects based on the provided parameters): 
+ ```javascript
+const noteSchema = new mongoose.Schema({
+  content: String,
+  date: Date,
+  important: Boolean,
+})
+
+const Note = mongoose.model('Note', noteSchema)
+```
+The the Note model definition, the 'Note' parameter will be the name of the model (and the name of the collection will automatically become 'notes'). Mongoose itself is schemaless, but at the application level it's good to define the shape of the documents. 
+### Creating and saving objects
+Create a new object with the help of the Note model, and save:
+ ```javascript
+ const note = new Note({
+  content: 'HTML is Easy',
+  date: new Date(),
+  important: false,
+})
+
+note.save().then(result => {
+  console.log('note saved!')
+  mongoose.connection.close()
+})
+```
+### Fetching objects from the database 
+Print all the notes in the database:
+```javascript 
+Note.find({}).then(result => {
+  result.forEach(note => {
+    console.log(note)
+  })
+  mongoose.connection.close()
+})
+```
