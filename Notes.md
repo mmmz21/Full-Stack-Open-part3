@@ -550,4 +550,27 @@ The HTTP request now returns a list of objects formatted using `toJSON`:
   })
 })
 ```
+### Database configuration into its own module
+Extract all Mongoose specfici code into it's own module, in a directory called *models* in a file called *note.js*. 
+Put this line at the end to export as a Node module (different from ES6 modules):
+```javascript
+module.exports = mongoose.model('Note', noteSchema)
+```
+The import into index.js using:
+```javscript
+const Note = require('./models/note')
+```
+Also note there were changes to the way the connection was made:
+```javascript
+const url = process.env.MONGODB_URI
 
+console.log('connecting to', url)
+
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
+  .then(result => {
+    console.log('connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log('error connecting to MongoDB:', error.message)
+  })
+```
