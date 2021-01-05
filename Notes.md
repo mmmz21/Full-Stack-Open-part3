@@ -600,3 +600,33 @@ app.listen(PORT, () => {
 ```
 
 ### Using database in route handlers
+Next, let's change the rest of the backend functionality to use the database.
+Creating a new note is accomplished like this:
+```javascript
+app.post('/api/notes', (request, response) => {
+  const body = request.body
+
+  if (body.content === undefined) {
+    return response.status(400).json({ error: 'content missing' })
+  }
+
+  // uses the Note constructor
+  const note = new Note({
+    content: body.content,
+    important: body.important || false,
+    date: new Date(),
+  })
+
+  note.save().then(savedNote => {
+    response.json(savedNote)
+  })
+})
+```
+To fetch an individual note:
+```javascript
+app.get('/api/notes/:id', (request, response) => {
+  Note.findById(request.params.id).then(note => {
+    response.json(note)
+  })
+})
+```
