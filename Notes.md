@@ -574,3 +574,11 @@ mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFind
     console.log('error connecting to MongoDB:', error.message)
   })
 ```
+The environment variable can be defined when the app is started:
+```console
+MONGODB_URI=address_here npm run dev
+```
+Or we can use the dotenv library (`npm install dotenv`), then create a .env file at the root of the project:
+```javascript
+MONGODB_URI='url goes here'
+PORT=3001
