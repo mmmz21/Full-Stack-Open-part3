@@ -430,3 +430,20 @@ A negative aspect of our approach is how complicated it is to deploy the fronten
 **Visual Studio code** - start debugging mode from the top menu, you may have to configure the launch.json file by choosing "Add configuration..." under the Debug drop-down mun, and selecting "Run "npm start" in a debug terminal.
 
 **Chrome dev tools** - start application with the command `node --inspect index.js` then click the green icon in the Chrome developer console. Go to the Sources tab to set breakpoints
+### MongoDB 
+To store our saved notes indefinitely, we need a database. **MongoDB** is a document/NoSQL/non-relational database. MongoDB stores data records as bSON (binary representation of JSON) **documents**, which are gathered together in **collections**. A **database** stores 1+ collections.
+
+Documents are composed of field-value pairs:
+```JSON
+var mydoc = {
+               _id: ObjectId("5099803df3f4948bd2f98391"),  <--- primary key
+               name: { first: "Alan", last: "Turing" },
+               birth: new Date('Jun 23, 1912'),
+               death: new Date('Jun 07, 1954'),
+               contribs: [ "Turing machine", "Turing test", "Turingery" ],
+               views : NumberLong(1250000)
+            }
+```
+Go to MongoDB Atlas and create a cluster using AWS as the provider. Then create a user and grant them read/write permission. Allow access from any IP. Click connect, 'connect your application' and then copy the connection string. 
+
+Then install mongoose `npm install mongoose`, 
