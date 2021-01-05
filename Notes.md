@@ -520,3 +520,4 @@ Note.find({}).then(result => {
   mongoose.connection.close()
 })
 ```
+### Backend connected to a database
