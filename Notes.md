@@ -521,3 +521,33 @@ Note.find({}).then(result => {
 })
 ```
 ### Backend connected to a database
+Now copy over the Mongoose definitions to index.js (minus the argv stuff). 
+Change the handler to:
+```javascript
+app.get('/api/notes', (request, response) => {
+  Note.find({}).then(notes => {
+    response.json(notes)
+  })
+})
+````
+The documents should now be displayed at localhost:3001/api/notes.Except we don't want to see the \_id or \_v fields. 
+
+We can modify the toJSON method of the schema:
+```javascript
+noteSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+  }
+})
+```
+The \_id field is an object, which we transform to a string. 
+The HTTP request now returns a list of objects formatted using `toJSON`:
+```javascript
+  Note.find({}).then(notes => {
+    response.json(notes.map(note => note.toJSON()))
+  })
+})
+```
+
