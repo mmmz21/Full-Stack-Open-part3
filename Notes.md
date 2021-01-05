@@ -578,7 +578,25 @@ The environment variable can be defined when the app is started:
 ```console
 MONGODB_URI=address_here npm run dev
 ```
-Or we can use the dotenv library (`npm install dotenv`), then create a .env file at the root of the project:
+Or we can use the dotenv library (`npm install dotenv`), then create a .env file at the root of the project (AND ADD TO .gitignore as .env!):
 ```javascript
 MONGODB_URI='url goes here'
 PORT=3001
+```
+The environment variables defined in the .env file are included using `require('dotenv').config()`, and accessed like `process.env.PORT`
+Change the index.js file to icnlude:
+```javascript
+require('dotenv').config()
+const express = require('express')
+const app = express()
+const Note = require('./models/note')
+
+// ..
+
+const PORT = process.env.PORT
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
+```
+
+### Using database in route handlers
