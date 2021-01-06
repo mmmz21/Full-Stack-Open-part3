@@ -630,3 +630,5 @@ app.get('/api/notes/:id', (request, response) => {
   })
 })
 ```
+### Verifying frontend and backend integration 
+Check using VS Code REST client, also check front end.
