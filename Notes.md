@@ -520,3 +520,115 @@ Note.find({}).then(result => {
   mongoose.connection.close()
 })
 ```
+### Backend connected to a database
+Now copy over the Mongoose definitions to index.js (minus the argv stuff). 
+Change the handler to:
+```javascript
+app.get('/api/notes', (request, response) => {
+  Note.find({}).then(notes => {
+    response.json(notes)
+  })
+})
+````
+The documents should now be displayed at localhost:3001/api/notes.Except we don't want to see the \_id or \_v fields. 
+
+We can modify the toJSON method of the schema:
+```javascript
+noteSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+  }
+})
+```
+The \_id field is an object, which we transform to a string. 
+The HTTP request now returns a list of objects formatted using `toJSON`:
+```javascript
+  Note.find({}).then(notes => {
+    response.json(notes.map(note => note.toJSON()))
+  })
+})
+```
+### Database configuration into its own module
+Extract all Mongoose specfici code into it's own module, in a directory called *models* in a file called *note.js*. 
+Put this line at the end to export as a Node module (different from ES6 modules):
+```javascript
+module.exports = mongoose.model('Note', noteSchema)
+```
+The import into index.js using:
+```javscript
+const Note = require('./models/note')
+```
+Also note there were changes to the way the connection was made:
+```javascript
+const url = process.env.MONGODB_URI
+
+console.log('connecting to', url)
+
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
+  .then(result => {
+    console.log('connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log('error connecting to MongoDB:', error.message)
+  })
+```
+The environment variable can be defined when the app is started:
+```console
+MONGODB_URI=address_here npm run dev
+```
+Or we can use the dotenv library (`npm install dotenv`), then create a .env file at the root of the project (AND ADD TO .gitignore as .env!):
+```javascript
+MONGODB_URI='url goes here'
+PORT=3001
+```
+The environment variables defined in the .env file are included using `require('dotenv').config()`, and accessed like `process.env.PORT`
+Change the index.js file to icnlude:
+```javascript
+require('dotenv').config()
+const express = require('express')
+const app = express()
+const Note = require('./models/note')
+
+// ..
+
+const PORT = process.env.PORT
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
+```
+
+### Using database in route handlers
+Next, let's change the rest of the backend functionality to use the database.
+Creating a new note is accomplished like this:
+```javascript
+app.post('/api/notes', (request, response) => {
+  const body = request.body
+
+  if (body.content === undefined) {
+    return response.status(400).json({ error: 'content missing' })
+  }
+
+  // uses the Note constructor
+  const note = new Note({
+    content: body.content,
+    important: body.important || false,
+    date: new Date(),
+  })
+
+  note.save().then(savedNote => {
+    response.json(savedNote)
+  })
+})
+```
+To fetch an individual note:
+```javascript
+app.get('/api/notes/:id', (request, response) => {
+  Note.findById(request.params.id).then(note => {
+    response.json(note)
+  })
+})
+```
+### Verifying frontend and backend integration 
+Check using VS Code REST client, also check front end.
