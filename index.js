@@ -3,21 +3,22 @@ const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
+const Person = require('./models/person')
 
 
-const requestLogger = (req, res, next) => {
+/*const requestLogger = (req, res, next) => {
   console.log('Method: ', req.method)
   console.log('Path: ', req.path)
   console.log('Body: ', req.body)
   console.log('---')
   next()
-}
+}*/
 
 //middlewares
 app.use(express.static('build'))
 //activate's the express json-parser
 app.use(express.json())
-app.use(requestLogger)
+//app.use(requestLogger)
 app.use(cors())
 
 morgan.token('post-body', function (req, res) {
@@ -25,20 +26,8 @@ morgan.token('post-body', function (req, res) {
     return JSON.stringify(req.body)
   }
 })
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post-body'))
 
-let persons = [
-  {
-    "name": "Harry Hole",
-    "number": "123457789",
-    "id": 14
-  },
-  {
-    "name": "Jennifer Asiks",
-    "number": "129010219",
-    "id": 15
-  }
-]
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post-body'))
 
 app.get('/', (req, res) => {
   res.send('<h1> Phonebook!</h1>')
@@ -52,18 +41,17 @@ app.get('/info', (req, res) => {
 
 // display all phonebook entries
 app.get('/api/persons', (req, res) => {
-  res.json(persons)
+  Person.find({}).then(people => {
+    // people.map((person) => person.toJson)
+    res.json(people.map(people => people.toJSON()))
+  })
 })
 
 // fetch an individual entry using it's id
 app.get('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-  const person = persons.find(person => person.id === id)
-  if (person) {
+  Person.findById(request.params.id).then(person => {
     res.json(person)
-  } else {
-    res.status(404).end()
-  }
+  })
 })
 
 // delete phonebook entries
@@ -76,47 +64,28 @@ app.delete('/api/persons/:id', (req, res) => {
 
 // add new phonebook entries to the server 
 app.post('/api/persons', (req, res) => {
-  const body = req.body
-  const same = persons.find(person => person.name === body.name)
-  /*if (!body.name) {
-    return res.status(400).json({
-      error: 'Phonebook entries must have a name'
-    })
+  const { body } = req
+  if (body.content === undefined) {
+    return res.status(400).json({ error: 'content missing' })
   }
-  else if (same) {
-    return res.status(400).json({
-      error: 'Name must be unique'
-    })
-  }
-  else if (!body.number || body.number.length !== 10) {
-    return res.status(400).json({
-      error: `Phone number is invalid, please re-enter.`
-    })
-  }*/
-  const person = {
+
+  const person = new Person({
     name: body.name,
     number: body.number,
     id: Math.floor(Math.random() * Math.floor(100)),
-  }
+  })
 
-  persons = persons.concat(person)
-  res.json(persons)
+  person.save().then(savedPerson => {
+    // response is sent only if operation succeeded
+    res.json(savedPerson.toJSON())
+  })
 })
 
-/*app.put('/api/persons/:id', (req, res) => {
-  const request = axios.put(`${baseUrl}/${id}`, newObject)
-  const person = {
-    name: body.name,
-    number: body.number,
-    id: Math.floor(Math.random() * Math.floor(100)),
-  }
-  return request.then(response => response.data)
-})*/
 const unknownEndpoint = (req, res) => {
   res.status(404).send({ error: 'unknown endpoint' })
 }
 app.use(unknownEndpoint)
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })

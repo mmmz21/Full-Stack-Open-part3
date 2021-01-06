@@ -1,6 +1,7 @@
-POST http://localhost:3001/api/persons
+POST https://polar-dawn-14610.herokuapp.com/api/persons
 Content-Type: application/json
 
-{   "name": "Earl Aasdsamasdasadssasdd",
-    "num":"122349550"
+{   
+    "name": "Earl Aasdsamasdasadssasdd",
+    "number":"9704026137"
 }
