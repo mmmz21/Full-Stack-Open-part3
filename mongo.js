@@ -1,18 +1,15 @@
 const mongoose = require('mongoose')
-const dotenv = require('dotenv');
-dotenv.config();
 
+if (process.argv.length < 3) {
+    console.log('Please provide the password as an argument: node mongo.js <password>')
+    process.exit(1)
+}
+const password = process.argv[2]
 let newName = ''
 let newNumber = ''
 
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
-    .then(() => {
-        console.log('connected to db')
-    })
-    .catch((err) => {
-        console.log(err)
-        process.exit(1)
-    })
+const url = `mongodb+srv://sampleuser:${password}@cluster0.mopyx.mongodb.net/people?retryWrites=true&w=majority`
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
 
 const personSchema = new mongoose.Schema({
     name: String,
@@ -22,7 +19,7 @@ const personSchema = new mongoose.Schema({
 
 const Person = mongoose.model('Person', personSchema)
 
-/*if (process.argv.length === 3) {
+if (process.argv.length === 3) {
     console.log('phonebook: ')
     Person.find({}).then(result => {
         result.forEach(person => {
@@ -44,7 +41,7 @@ else if (process.argv.length === 5) {
         console.log('added', newName, newNumber, 'to phonebook')
         mongoose.connection.close()
     })
-}*/
+}
 
 
 
