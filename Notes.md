@@ -632,3 +632,6 @@ app.get('/api/notes/:id', (request, response) => {
 ```
 ### Verifying frontend and backend integration 
 Check using VS Code REST client, also check front end.
+
+**IMPORTANT!!!!!**
+I got stuck on this part for awhile - Heroku cannot (obviously, in retrospect) see the .env file! The error I was getting was just a timeout from the .find() inside of my api/persons get request, and a resulting unhandled promise error. The solution was to set the environment variables in the heroku cli, using `heroku config:set VARIABLE='value'`
