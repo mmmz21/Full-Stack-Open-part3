@@ -41,8 +41,8 @@ app.get('/info', (req, res) => {
 
 // display all phonebook entries
 app.get('/api/persons', (req, res) => {
-  Person.find({}).then(people => {
-    res.json(people.map(person => person.toJSON()))
+  Person.find({}).then(persons => {
+    res.json(persons.map(person => person.toJSON()))
   })
 })
 
