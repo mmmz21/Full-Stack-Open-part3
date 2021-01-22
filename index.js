@@ -62,7 +62,7 @@ app.delete('/api/persons/:id', (req, res) => {
 })
 
 // add new phonebook entries to the server 
-app.post('/api/people', (req, res) => {
+app.post('/api/persons', (req, res) => {
   const { body } = req
   if (body.content === undefined) {
     return res.status(400).json({ error: 'content missing' })
